@@ -1,7 +1,7 @@
 #ifndef EDITDIALOG_H
 #define EDITDIALOG_H
 #include <QtGui>
-
+#include "attrDialog.h"
 class editDialog : public QDialog
 {
     Q_OBJECT
@@ -13,6 +13,7 @@ private:
     QLabel *infoLabel;
     QTextEdit *editText;
     QString content;
+    attrDialog *aDialog;
 
     void initEditDialog();
 public:
@@ -21,5 +22,6 @@ public:
 private slots:
     void ok_button_changed();
     void cancel_button();
+    void closeEvent(QCloseEvent *event);
 };
 #endif // EDITDIALOG_H

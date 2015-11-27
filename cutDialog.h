@@ -36,6 +36,7 @@ private slots:
     void delete_current_row();
     void find_by_date();
     void get_current_info();
+
     void clear_history_record();
     void edit_current_row();
     void ok_edit_button();

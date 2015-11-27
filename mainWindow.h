@@ -62,6 +62,7 @@ private:
 
     QFileDialog * fileInput;
 
+
     QTimer *progressTimer;
     QProgressDialog *progressDlg;
     Thread  *thread;
@@ -112,10 +113,12 @@ private slots:
       void finishTimeProgress();
       void progressDlgcancel();
       void showWindowNormal();
+
 protected:
       void changeEvent(QEvent *e);
       void closeEvent(QCloseEvent *);
       bool eventFilter(QObject *, QEvent *);
+
 };
 
 #endif // MAINWINDOW_H

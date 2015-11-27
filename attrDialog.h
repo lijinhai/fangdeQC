@@ -35,11 +35,12 @@ public:
     explicit attrDialog(QWidget *parent = 0);
     int exec();
     void recoverySetting();
+    bool copyFileToPath();
 private:
     void readingSettings();
     void writeSettings();
-    bool copyFileToPath();
 private slots:
+
     void ok_button_event();
     //void cancel_button_event();
 protected:

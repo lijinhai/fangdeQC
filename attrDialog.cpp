@@ -83,7 +83,7 @@ attrDialog::attrDialog(QWidget *parent) : QDialog(parent)
     vcutLayout ->addWidget(cutLabel);
     vcutLayout ->addWidget(viewBox);
     vcutLayout ->addWidget(cutselectbox);
-//    vcutLayout ->addWidget(cutcopybox);
+   // vcutLayout ->addWidget(cutcopybox);
     vcutLayout ->addLayout(hsizeLayout);
 
 
@@ -130,6 +130,7 @@ attrDialog::attrDialog(QWidget *parent) : QDialog(parent)
     okButton = new QPushButton(code ->toUnicode("确定"));
     connect(okButton,SIGNAL(clicked()),this,SLOT(ok_button_event()));
 
+
     cancelButton = new QPushButton(code ->toUnicode("取消"));
     connect(cancelButton,SIGNAL(clicked()),this,SLOT(close()));
 
@@ -147,6 +148,7 @@ attrDialog::attrDialog(QWidget *parent) : QDialog(parent)
     vboxLayout ->addStretch();
     vboxLayout ->addLayout(hbuttonLayout);
     setLayout(vboxLayout);
+    this ->setTabOrder(cutselectbox,fontSizeBox);
     this ->setFixedSize(400,400);
     readingSettings();
 }
@@ -249,8 +251,9 @@ void attrDialog::ok_button_event()
     {
         QMessageBox message(QMessageBox::Critical, "属性设置错误        ",
                             "<p>编辑热键设置非法 ！</p>"
-                            "<p><strong><font color=red>""请重新设置 !" "</font></strong></p>"
+                            "<p>""请重新设置 !" "</font></strong></p>"
                             ,QMessageBox::Ok ,this,Qt::Tool);
+        this ->activateWindow();
         message.exec();
         return;
     }
@@ -259,25 +262,28 @@ void attrDialog::ok_button_event()
     {
         QMessageBox message(QMessageBox::Critical, "属性设置错误        ",
                             "<p>历史记录热键设置非法 ！</p>"
-                            "<p><strong><font color=red>""请重新设置 !" "</font></strong></p>"
+                            "<p>""请重新设置 !" "</font></strong></p>"
                             ,QMessageBox::Ok ,this,Qt::Tool);
+        this ->activateWindow();
         message.exec();
         return;
     }
 
     keyList << "Ctrl+R" << "Ctrl+S" << "Ctrl+A" << "Ctrl+Q"
-                   <<"Alt+A" << "Alt+I" << "Alt+F" << "Alt+E" << "Alt+T" << "Alt+H";
+                   <<"Alt+A" << "Alt+I" << "Alt+F" << "Alt+E" << "Alt+T" << "Alt+H"
+                   <<"Alt+C" << "Alt+O" << "Alt+N" << "Alt+S";
     nameList << "清除历史记录(Ctrl+R)" << "输出(Ctrl+S)" << "属性(Ctrl+A)" << "退出(Ctrl+Q)"
-                        << "关于(Alt+A)" << "使用说明(Alt+I)" << "文件(Alt+F)" << "编辑(Alt+E)" << "工具(Alt+T)" << "帮助(Alt+H)";
-
+                        << "关于(Alt+A)" << "使用说明(Alt+I)" << "文件(Alt+F)" << "编辑(Alt+E)" << "工具(Alt+T)" << "帮助(Alt+H)"
+                        << "取消(Alt+C)" << "确定(Alt+O)" << "否(Alt+N)"<< "保存(Alt+S)";
     if(!historyKey.isEmpty())
     {
         if(historyKey == editKey)
         {
-            QMessageBox message(QMessageBox::Critical, "属性设置错误        ",
+            QMessageBox message(QMessageBox::Critical, "属性设置错误            ",
                                 "<p>禁止将历史记录与编辑的热键设置为同一热键</p>"
-                                "<p><strong><font color=red>""请重新设置 !" "</font></strong></p>"
+                                "<p>""请重新设置 !" "</font></strong></p>"
                                 ,QMessageBox::Ok ,this,Qt::Tool);
+            this ->activateWindow();
             message.exec();
             return;
         }
@@ -289,8 +295,9 @@ void attrDialog::ok_button_event()
         {
             QMessageBox message(QMessageBox::Critical, "属性设置错误        ",
                                  "<p>""历史记录热键设置与 '"+ nameList[i] +"' 快捷方式冲突" "</p>"
-                                "<p><strong><font color=red>""请重新设置 !" "</font></strong></p>"
+                                "<p>""请重新设置 !" "</font></strong></p>"
                                 ,QMessageBox::Ok ,this,Qt::Tool);
+            this ->activateWindow();
             message.exec();
             return;
         }
@@ -302,8 +309,9 @@ void attrDialog::ok_button_event()
         {
             QMessageBox message(QMessageBox::Critical, "属性设置错误        ",
                                 "<p>""编辑热键设置与 '"+ nameList[i] +"' 快捷方式冲突" "</p>"
-                                "<p><strong><font color=red>""请重新设置 !" "</font></strong></p>"
+                                "<p>""请重新设置 !" "</font></strong></p>"
                                 ,QMessageBox::Ok ,this,Qt::Tool);
+            this ->activateWindow();
             message.exec();
             return;
         }
@@ -336,5 +344,32 @@ void attrDialog::keyPressEvent(QKeyEvent *event)
         {
                 this ->close();
                 return;
+        }
+       else  if(event ->key() == Qt::Key_Enter ||event ->key() == Qt::Key_Return)
+        {
+            if(setboldbox ->hasFocus())
+            {
+                setboldbox->setChecked(!setboldbox->isChecked());
+            }
+            if( setrebootbox ->hasFocus())
+            {
+                setrebootbox->setChecked(!setrebootbox->isChecked());
+            }
+            if( setautobox ->hasFocus())
+            {
+               setautobox->setChecked(!setautobox->isChecked());
+            }
+            if( setdesktopstratbox ->hasFocus())
+            {
+                setdesktopstratbox->setChecked(!setdesktopstratbox->isChecked());
+            }
+            if(cutselectbox->hasFocus())
+            {
+               cutselectbox->setChecked(!cutselectbox->isChecked());
+            }
+            if( viewBox->hasFocus())
+            {
+                viewBox->setChecked(!viewBox->isChecked());
+            }
         }
 }

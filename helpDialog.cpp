@@ -2,7 +2,7 @@
 #include <QWidget>
 helpDialog::helpDialog(const QString &path, const QString &page, QWidget *parent)
 {
-    this->setWindowFlags( Qt::WindowStaysOnTopHint|Qt::SubWindow);
+    this->setWindowFlags( Qt::WindowStaysOnTopHint | Qt::SubWindow);
     this ->setWindowIcon(QIcon(":images/icon.png"));//:images/icon.png
     setFixedSize(565,540);
     setFocus();
@@ -151,7 +151,7 @@ void helpDialog::backwardSection()
     qDebug()<<"start";
     QString windowTitleString=textBrowser->documentTitle();
     int eresult=QString::localeAwareCompare(windowTitleString,"信息编辑与输出说明");
-    if(0==eresult)
+    if(0 == eresult)
     {
      downSection->setToolTip("");
      textBrowser->setSource(QUrl("histroyrecord.html"));

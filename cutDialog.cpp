@@ -6,9 +6,18 @@ cutDialog::cutDialog(QWidget *parent) : QDialog(parent)
 {
         initHistoryDialog();
         viewListWidget();
+        this ->setTabOrder(viewAllButton,findButton);
+        this ->setTabOrder(findButton,dateEdit);
+        this ->setTabOrder(dateEdit,selectRadioButton);
+        this ->setTabOrder(selectRadioButton,orderButton);
+         this ->setTabOrder(orderButton,listWidget);
+        this ->setTabOrder(listWidget,deleteButton);
+         this ->setTabOrder(deleteButton,clearButton);
+        this ->setTabOrder(clearButton,editButton);
+         this ->setTabOrder(editButton,quitButton);
+      //  QWidget::setTabOrder();
+
 }
-
-
 int cutDialog::exec()
 {
     QDialog::exec();
@@ -72,9 +81,10 @@ void cutDialog::find_by_date()
         }
         if(row == 0)
         {
-            QMessageBox message(QMessageBox::Information, "查找        ",
+            QMessageBox message(QMessageBox::Information, "查找             ",
                                 "查找失败 !"
                                 ,QMessageBox::Ok ,this,Qt::Tool);
+            this ->activateWindow();
             message.exec();
         }
 
@@ -93,8 +103,9 @@ void cutDialog::edit_current_row()
     if(selected.length() != 1)
     {
         QMessageBox message(QMessageBox::Critical, "编辑错误        ",
-                            "<p><strong><font color=red>请选择单条文本内容进行编辑 !</font></strong></p>"
+                            "<p>请选择单条文本内容进行编辑 !</font></strong></p>"
                             ,QMessageBox::Ok ,this,Qt::Tool);
+        this ->activateWindow();
         message.exec();
         return;
     }
@@ -124,6 +135,7 @@ void cutDialog::edit_current_row()
                    QMessageBox message(QMessageBox::Warning, "编辑提示        ",
                                        "文件不能编辑 !"
                                        ,QMessageBox::Ok ,this,Qt::Tool);
+                   this ->activateWindow();
                    message.exec();
                    return;
              }
@@ -147,8 +159,9 @@ void cutDialog::edit_current_row()
     else
     {
         QMessageBox message(QMessageBox::Critical, "编辑错误        ",
-                            "<p><strong><font color=red>请选择编辑的内容 !</font></strong></p>"
+                            "<p>请选择编辑的内容 !</font></strong></p>"
                             ,QMessageBox::Ok ,this,Qt::Tool);
+        this ->activateWindow();
         message.exec();
     }
 }
@@ -208,6 +221,7 @@ void cutDialog::clear_history_record()
      QMessageBox message(QMessageBox::Question, "清除历史记录        ",
                          "确定要清除历史记录 ?"
                          ,QMessageBox::Ok  | QMessageBox::Cancel,this,Qt::Tool);
+      this ->activateWindow();
      if(QMessageBox::Ok ==  message.exec())
      {
          disconnect(listWidget,SIGNAL(currentItemChanged(QListWidgetItem*,QListWidgetItem*)),this,0);
@@ -289,7 +303,14 @@ void cutDialog::delete_current_row()
      rowMapIterator.toBack();
      if(selected.count()!= 0)
      {
-       while (rowMapIterator.hasPrevious()) {
+         QMessageBox message(QMessageBox::Question, "删除记录        ",
+                             "确定要删除此条历史记录 ?"
+                             ,QMessageBox::Ok  | QMessageBox::Cancel,this,Qt::Tool);
+          this ->activateWindow();
+         if(QMessageBox::Ok ==  message.exec())
+     {
+       while (rowMapIterator.hasPrevious())
+       {
             rowMapIterator.previous();
             rowToDel = rowMapIterator.key();
             QListWidgetItem * item = listWidget ->item(rowToDel);
@@ -300,18 +321,22 @@ void cutDialog::delete_current_row()
             connect(listWidget,SIGNAL(currentItemChanged(QListWidgetItem*,QListWidgetItem*)),this,SLOT(get_current_info()));
             int row = listWidget ->currentRow();
             listWidget ->setItemSelected(listWidget ->item(row),false);
-
         }
+     }
+
+      allEdit ->clear();
      }
      else
      {
          QMessageBox message(QMessageBox::Information, "删除提示        ",
                              "请选择删除的内容 !"
                              ,QMessageBox::Ok ,this,Qt::Tool);
+         this ->activateWindow();
          message.exec();
          return;
-     }
-     allEdit ->clear();
+      }
+
+ }
 
 //wangxu
 //    int row = listWidget ->currentRow();
@@ -343,7 +368,7 @@ void cutDialog::delete_current_row()
 //    row = listWidget ->currentRow();
 //    listWidget ->setItemSelected(listWidget ->item(row),false);
 
-}
+
 
 
 void cutDialog::view_all_data()
@@ -670,11 +695,12 @@ void cutDialog::closeEvent(QCloseEvent * event)
          if(selected.length() != 1)
         {
              QMessageBox message(QMessageBox::Critical, "设置剪切板错误        ",
-                                 "<p><strong><font color=red>设置剪切板失败,请选择单条内容设置剪切板 !</font></strong></p>"
+                                 "<p>设置剪切板失败,请选择单条内容设置剪切板 !</font></strong></p>"
                                  ,QMessageBox::Ok ,this,Qt::Tool);
-             message.exec();
-             event ->ignore();
-             return;
+            this ->activateWindow();
+            message.exec();
+            event ->ignore();
+            return;
         }
         int row = listWidget ->currentRow();
         if(row >=0 )
@@ -707,11 +733,12 @@ void cutDialog::closeEvent(QCloseEvent * event)
                         else
                         {
                             QMessageBox message(QMessageBox::Critical, "设置剪切板错误        ",
-                                                "<p><strong><font color=red>源文件不存在,设置剪切板失败 !</font></strong></p>"
+                                                "<p>源文件不存在,设置剪切板失败 !</font></strong></p>"
                                                 ,QMessageBox::Ok ,this,Qt::Tool);
+                            this ->activateWindow();
                             message.exec();
-                             event ->ignore();
-                              return;
+                            event ->ignore();
+                            return;
                         }
 
                     }

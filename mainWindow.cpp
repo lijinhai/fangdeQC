@@ -26,6 +26,7 @@ int mainWindow::dnum = 0;
 void mainWindow::initWindow()
 {
     aDialog = new attrDialog(this);
+    aDialog ->copyFileToPath();
     cDialog = NULL;
     eDialog = NULL;
     fileInput = new QFileDialog(this);
@@ -38,7 +39,8 @@ void mainWindow::initWindow()
     editShort = NULL;
     cutBoard = new QTextEdit(this);
    cutBoard ->setReadOnly(true);
-    help = new helpDialog("/usr/share/doc/fangdeQC/doc" ,"main.html");
+  // help = NULL;
+   help = new helpDialog("/usr/share/doc/fangdeQC/doc" ,"main.html");
 
     progressTimer = new QTimer(this);
     connect(progressTimer,SIGNAL(timeout()),this,SLOT(finishTimeProgress()));
@@ -49,13 +51,12 @@ void mainWindow::initWindow()
     progressDlg->setWindowModality(Qt::WindowModal);
     progressDlg->setMinimumDuration(5);
     progressDlg->setWindowTitle("文件输出            ");
-//    progressDlg ->setMinimum(0);
-//    progressDlg ->setMaximum(0);
     connect(progressDlg, SIGNAL(canceled()), this, SLOT(progressDlgcancel()));
 
     this ->setCentralWidget(cutBoard);
     this ->setWindowIcon(QIcon(":images/icon.png"));
     this ->setWindowTitle(code ->toUnicode("剪切板管理工具"));
+    this ->setMinimumSize(300,350);
     this ->setGeometry(0,0,400,450);
     font.setPointSize(aDialog ->fontSizeBox ->currentText().toInt());
     if(aDialog ->setboldbox ->isChecked())
@@ -320,22 +321,26 @@ void mainWindow::createToolBars()
 
 void mainWindow::createTray()
 {
-    miniSizeAction = new QAction("最小化(&H)",this);
+    miniSizeAction = new QAction("最小化",this);
+//    miniSizeAction = new QAction("最小化(&H)",this);
     connect(miniSizeAction,SIGNAL(triggered()),this,SLOT(hide()));
-   // connect(miniSizeAction,SIGNAL(triggered()),this,SLOT(showMinimized()));
 
-    maxSizeAction = new QAction("最大化(&M)",this);
+    maxSizeAction = new QAction("最大化",this);
+//     maxSizeAction = new QAction("最大化(&M)",this);
     connect(maxSizeAction,SIGNAL(triggered()),this,SLOT(showMaximized()));
 
-    quitAction = new QAction("退出(&Q)",this);
+    quitAction = new QAction("退出",this);
+//    quitAction = new QAction("退出(&Q)",this);
     connect(quitAction,SIGNAL(triggered()),this,SLOT(close()));
 
     trayAboutAction = new QAction("关于(&A)",this);
     connect(trayAboutAction,SIGNAL(triggered()),this,SLOT(softwareInfo()));
 
 
-    openBoardAction = new QAction("打开主面板(&S)",this);
+    openBoardAction = new QAction("打开主面板",this);
+//    openBoardAction = new QAction("打开主面板(&S)",this);
     connect(openBoardAction,SIGNAL(triggered()),this,SLOT(showNormal()));
+
 
     trayMenu = new QMenu((QWidget*)QApplication::desktop());
     //trayMenu ->setFocus();
@@ -406,7 +411,6 @@ bool mainWindow::writeFile(QString content,const QString fileType,const QString 
     QString insertSql = "insert into info(id,time,type,content,file) values(null,'"  + current_time + "','"
                 + fileType + "','" + content + "','" + file + "')";
     query.exec(insertSql);
-
 }
 
 bool mainWindow::copyText(const QString &fileName,const QString &text)
@@ -444,6 +448,8 @@ bool mainWindow::judgeIsFile()
         QString minUnit;
         qint64 remianSize = size;
         int count = 0;
+        double dsize = (double)size;
+
         while( (remianSize /= 1024 ) != 0)
         {
                 count ++;
@@ -468,13 +474,19 @@ bool mainWindow::judgeIsFile()
         if(count != 0)
         {
             for(int i = 0; i < count; i++)
-                size /= 1024;
+                    dsize = dsize / 1024;
+        }
+
+        if(unitName == " B")
+        {
+                fileSize = QString::number(size) + unitName + minUnit;
         }
         else
         {
-            size = size;
+                fileSize = QString::number(dsize,'f',1) + unitName + minUnit;
         }
-        fileSize = QString::number(size) + unitName + minUnit;
+
+
         return fileSize;
  }
 
@@ -520,7 +532,6 @@ qint64 mainWindow::getFolderSize(const QString &path)
                if (fileInfo.isFile())
                {
                    totalsize += fileInfo.size();
-                   qDebug() << "name:" << fileInfo.absoluteFilePath() << "size:" <<  fileInfo.size();
                }
                else if(fileInfo.isDir())
                {
@@ -810,7 +821,6 @@ void mainWindow::save()
             }
 
                 qint64 size =  getBoardSize(content) / (1024 * 1024 * 10) ;
-                qDebug() << "size:" << size;
                 progressDlg ->setRange(0,size);
                 progressDlg->setLabelText("正在向" + fileInput ->selectedFiles()[0] + " 路径下输出...... " );
                 shortCut = 0;
@@ -930,11 +940,8 @@ void mainWindow::opengedit()
 
 void mainWindow::intructions_clicked_data()
 {
-    if(!help ->isVisible())
-    {
-        help->resize(500,400);
-        help->show();
-    }
+        help ->hide();
+        help ->showNormal();
 }
 
 void mainWindow::showWindowNormal()
@@ -1149,6 +1156,8 @@ void mainWindow::closeEvent(QCloseEvent *event)
 bool mainWindow::eventFilter(QObject *object, QEvent *event)
 {
     QKeyEvent *keyEvent = static_cast<QKeyEvent *>(event);
+
+
     if(event ->type() == QEvent::KeyPress)
     {
         if(keyEvent ->key() == Qt::Key_Alt)
@@ -1213,6 +1222,7 @@ bool mainWindow::eventFilter(QObject *object, QEvent *event)
 
   else
         return false;
-}
+    }
+
 
 

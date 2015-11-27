@@ -149,8 +149,7 @@ int Thread::copy(QString sPath, QString tPath)
                 if(totalSize== 1048576* 10)
                 {
                         mainWindow::dnum++;
-//                        qDebug() << "--:" << mainWindow::dnum;
-                       totalSize = 0;
+                        totalSize = 0;
                  }
 
                   if(ch > -1)
@@ -202,7 +201,14 @@ QString Thread::changeFileName(QString name)
         {
             baseName = baseName.replace("副本" + QString::number(i -1),"副本" + QString::number(i));
         }
-        name = absolutePath +"/" + baseName + "." +suffixName;
+        if(suffixName.isEmpty())
+        {
+                 name = absolutePath +"/" + baseName;
+        }
+        else
+        {
+            name = absolutePath +"/" + baseName + "." +suffixName;
+        }
         i++; 
         cFile.setFileName(name);
     }
